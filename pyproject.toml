@@ -72,8 +72,8 @@ release = [
 "Security Policy" = "https://github.com/olympus-tools/DCMI/security/policy"
 "Contributing" = "https://github.com/olympus-tools/DCMI/blob/master/CONTRIBUTING.md"
 
-[tool.setuptools]
-packages = ["dcmi"]
+[tool.setuptools.packages.find]
+include = ["dcmi*"]
 
 [tool.setuptools.package-data]
 dcmi = ["py.typed"]
