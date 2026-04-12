@@ -34,6 +34,7 @@ limitations under the License:
 """
 
 import re
+import shlex
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -108,14 +109,28 @@ class DCMI:
                 for dcm_parameter in dcm_parameters:
                     lines = dcm_parameter.splitlines()
 
+                    parameter_keyword = ""
+                    parameter_name = ""
+                    dim_str: list[str] = []
+                    value: list[float | str] = []
+                    breakpoints_1: list[float | str] = []
+                    breakpoints_2: list[float | str] = []
+                    description = None
+                    unit_value = None
+                    unit_breakpoints_1 = None
+                    unit_breakpoints_2 = None
+                    name_breakpoints_1 = None
+                    name_breakpoints_2 = None
+
                     for line in lines:
                         line = re.sub(r"^\*", "", line)
                         line = line.strip()
+                        line_tokens = shlex.split(line)
 
                         if line.startswith(tuple(keywords)):
-                            parameter_keyword = line.split()[0]
-                            parameter_name = line.split()[1]
-                            dim_str = line.split()[2:]
+                            parameter_keyword = line_tokens[0]
+                            parameter_name = line_tokens[1]
+                            dim_str = line_tokens[2:]
                             parameter[parameter_name] = {}
                             value = []
                             breakpoints_1 = []
@@ -126,6 +141,7 @@ class DCMI:
                             unit_breakpoints_2 = None
                             name_breakpoints_1 = None
                             name_breakpoints_2 = None
+
                         elif line.startswith("LANGNAME"):
                             description = (
                                 description_tmp.group(1)
@@ -160,27 +176,23 @@ class DCMI:
                             )
                         elif line.startswith("SSTX"):
                             name_breakpoints_1 = (
-                                line.split()[1] if len(line.split()) > 1 else None
+                                line_tokens[1] if len(line_tokens) > 1 else None
                             )
                         elif line.startswith("SSTY"):
                             name_breakpoints_2 = (
-                                line.split()[1] if len(line.split()) > 1 else None
+                                line_tokens[1] if len(line_tokens) > 1 else None
                             )
                         elif line.startswith("ST_TX/X") or line.startswith("ST/X"):
-                            value_tmp = line.split()[1:]
-                            value_tmp = [float(x) for x in value_tmp]
+                            value_tmp = DCMI._parse_mixed_values(line_tokens[1:])
                             breakpoints_1.extend(value_tmp)
                         elif line.startswith("ST_TX/Y") or line.startswith("ST/Y"):
-                            value_tmp = line.split()[1:]
-                            value_tmp = [float(x) for x in value_tmp]
+                            value_tmp = DCMI._parse_mixed_values(line_tokens[1:])
                             breakpoints_2.extend(value_tmp)
                         elif line.startswith("WERT"):
-                            value_tmp = line.split()[1:]
-                            value_tmp = [float(x) for x in value_tmp]
+                            value_tmp = DCMI._parse_mixed_values(line_tokens[1:])
                             value.extend(value_tmp)
                         elif line.startswith("TEXT"):
-                            value_tmp = line.split()[1:]
-                            value_tmp = [x.replace('"', "") for x in value_tmp]
+                            value_tmp = line_tokens[1:]
                             value.extend(value_tmp)
 
                     parameter[parameter_name]["description"] = description
@@ -292,6 +304,31 @@ class DCMI:
             error_msg = f"An unexpected error occurred while parsing the DCM file '{self.file_path}': {e}"
             print(error_msg)
             return {}
+
+    @staticmethod
+    @typechecked
+    def _parse_mixed_values(tokens: list[str]) -> list[float | str]:
+        """Convert numeric tokens to float and keep non-numeric tokens as string.
+
+        Args:
+            tokens (list[str]): Token list from one DCM data line.
+
+        Returns:
+            list[float | str]: Parsed values with mixed numeric/text support.
+        """
+
+        def _parse_token(token: str) -> float | str:
+            normalized = token.strip().strip('"')
+            try:
+                return float(normalized)
+            except ValueError:
+                pass
+            # Accept scientific notation variants like 1.23D+03 used in some DCM files.
+            if re.match(r"^[+-]?(?:\d+\.?\d*|\.\d+)[dD][+-]?\d+$", normalized):
+                return float(normalized.replace("D", "E").replace("d", "e"))
+            return normalized
+
+        return [_parse_token(t) for t in tokens]
 
     @typechecked
     def write(
@@ -488,12 +525,13 @@ class DCMI:
 
     @staticmethod
     @typechecked
-    def _dcm_array1d_str(title: str, input_array: list[int | float]) -> list[str]:
+    def _dcm_array1d_str(title: str, input_array: list[int | float | str]) -> list[str]:
         """Formats a one-dimensional array into DCM string lines.
 
         Args:
             title (str): The DCM keyword or title for the data lines (e.g., 'WERT', 'ST/X').
-            input_array (list[int | float]): A one-dimensional list of numerical values.
+            input_array (list[int | float | str]): A one-dimensional list of
+                values.
 
         Returns:
             list[str]: A list of formatted string lines for the DCM file.
@@ -510,7 +548,7 @@ class DCMI:
     @staticmethod
     @typechecked
     def _dcm_array2d_str(
-        title: str, input_array: list[list[int | float]]
+        title: str, input_array: list[list[int | float | str]]
     ) -> list[list[str]]:
         """Formats a two-dimensional array into a list of formatted string blocks.
 
@@ -519,8 +557,8 @@ class DCMI:
 
         Args:
             title (str): The DCM keyword or title for the data lines (e.g., 'WERT').
-            input_array (list[list[int | float]]): A two-dimensional list of
-                numerical values to be formatted.
+            input_array (list[list[int | float | str]]): A two-dimensional list
+                of values to be formatted.
 
         Returns:
             list[list[str]]: A list of lists, where each inner list contains the
