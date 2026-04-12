@@ -125,7 +125,7 @@ class DCMI:
                     for line in lines:
                         line = re.sub(r"^\*", "", line)
                         line = line.strip()
-                        line_tokens = shlex.split(line)
+                        line_tokens = DCMI._split_line_tokens(line)
 
                         if line.startswith(tuple(keywords)):
                             parameter_keyword = line_tokens[0]
@@ -304,6 +304,27 @@ class DCMI:
             error_msg = f"An unexpected error occurred while parsing the DCM file '{self.file_path}': {e}"
             print(error_msg)
             return {}
+
+    @staticmethod
+    @typechecked
+    def _split_line_tokens(line: str) -> list[str]:
+        """Split a line into tokens using shlex, falling back to str.split on parse errors.
+
+        This handles malformed lines that contain unmatched or stray quote
+        characters (e.g. a lone ``"``) which would otherwise cause
+        :func:`shlex.split` to raise a :class:`ValueError`.
+
+        Args:
+            line (str): A single text line to split into tokens.
+
+        Returns:
+            list[str]: List of tokens. Uses :func:`shlex.split` when possible,
+                otherwise falls back to :meth:`str.split`.
+        """
+        try:
+            return shlex.split(line)
+        except ValueError:
+            return line.split()
 
     @staticmethod
     @typechecked
