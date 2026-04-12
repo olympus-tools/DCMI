@@ -88,6 +88,13 @@ addopts = [
 line-length = 88
 # The target Python version.
 target-version = "py312"
+# Excluded files and directories.
+exclude = [
+    "ares/core/version.py",
+    "packages",
+    "submodules",
+    ".venv",
+]
 
 [tool.ruff.format]
 # The preferred quote style.

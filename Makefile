@@ -83,11 +83,11 @@ test-coverage: setup-venv
 
 .PHONY: format
 format: setup-venv
-	@"$(VENV_BIN)/ruff" format . --exclude dcmi/version.py --exclude .venv
+	@"$(VENV_BIN)/ruff" format .
 
 .PHONY: format-check
 format-check: setup-venv
-	@"$(VENV_BIN)/ruff" format --check . --exclude dcmi/version.py --exclude .venv
+	@"$(VENV_BIN)/ruff" format --check .
 
 .PHONY: build-executable
 build-executable: setup-venv
