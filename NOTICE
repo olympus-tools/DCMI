@@ -10,21 +10,18 @@ This product contains dependencies with the following licenses:
 
 Apache-2.0 License:
 ------------------------------------------------------------------------------
-  * coverage 7.13.5
+  * coverage 7.16.1
     URL: https://github.com/coveragepy/coveragepy
 
 
 Apache-2.0 OR BSD-2-Clause License:
 ------------------------------------------------------------------------------
-  * packaging 26.0
+  * packaging 26.3
     URL: https://github.com/pypa/packaging
 
 
 BSD License License:
 ------------------------------------------------------------------------------
-  * Pygments 2.19.2
-    URL: https://pygments.org
-
   * gitdb 4.0.12
     URL: https://github.com/gitpython-developers/gitdb
 
@@ -32,9 +29,15 @@ BSD License License:
     URL: https://github.com/gitpython-developers/smmap
 
 
+BSD-2-Clause License:
+------------------------------------------------------------------------------
+  * Pygments 2.21.0
+    URL: https://pygments.org
+
+
 BSD-3-Clause License:
 ------------------------------------------------------------------------------
-  * GitPython 3.1.45
+  * GitPython 3.1.59
     URL: https://github.com/gitpython-developers/GitPython
 
 
@@ -42,6 +45,9 @@ MIT License:
 ------------------------------------------------------------------------------
   * iniconfig 2.3.0
     URL: https://github.com/pytest-dev/iniconfig
+
+  * pytest 9.0.3
+    URL: https://docs.pytest.org/en/latest/
 
   * typeguard 4.4.4
     URL: UNKNOWN
@@ -55,9 +61,6 @@ MIT License License:
   * pluggy 1.6.0
     URL: UNKNOWN
 
-  * pytest 8.4.1
-    URL: https://docs.pytest.org/en/latest/
-
   * pytest-cov 6.0.0
     URL: https://github.com/pytest-dev/pytest-cov
 
@@ -67,6 +70,6 @@ MIT License License:
 
 PSF-2.0 License:
 ------------------------------------------------------------------------------
-  * typing_extensions 4.15.0
+  * typing_extensions 4.16.0
     URL: https://github.com/python/typing_extensions
 
