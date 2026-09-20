@@ -46,7 +46,7 @@ test = [
 ]
 dev = [
     "ruff==0.12.11",
-    "gitpython==3.1.45",
+    "gitpython==3.1.59",
     "pip-licenses==5.0.0",
     "pipdeptree==2.23.4",
     "dcmi[test]",
