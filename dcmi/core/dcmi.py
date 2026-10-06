@@ -373,12 +373,12 @@ class DCMI:
         """
         try:
             encoding_type = "utf-8"
-            time_stamp = datetime.now()
+            time_stamp = datetime.now().astimezone()
             metadata_str = [
                 f'* encoding="{encoding_type}"',
                 "* DAMOS-Austauschdatei",
-                f"* Erstellt mit ARES {meta_data['version']}",
-                f"* Erstellt von: {meta_data['username']}",
+                f"* Erstellt mit ARES {meta_data.get('version', 'UNKNOWN')}",
+                f"* Erstellt von: {meta_data.get('username', 'UNKNOWN')}",
                 f"* Erstellt am: {time_stamp.strftime('%d.%m.%Y %H:%M:%S')}",
                 "\n",
             ]
