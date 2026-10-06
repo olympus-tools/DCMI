@@ -104,7 +104,9 @@ class DCMI:
             with open(self.file_path, "r", encoding="utf-8") as dcm_file:
                 dcm_content = dcm_file.read()
                 dcm_content = dcm_content.replace("\t", " ")
-                dcm_parameters = re.findall(parameter_pattern, dcm_content, flags=re.M)
+                dcm_parameters = re.findall(
+                    parameter_pattern, dcm_content, flags=re.MULTILINE
+                )
 
                 for dcm_parameter in dcm_parameters:
                     lines = dcm_parameter.splitlines()
@@ -402,7 +404,7 @@ class DCMI:
                     match parameter_keyword:
                         case "FESTWERT":
                             unit_str.append(f'\tEINHEIT_W "{parameter_value.unit}"')
-                            value_str.append(f"\tWERT\t{str(parameter_value.value)}")
+                            value_str.append(f"\tWERT\t{parameter_value.value!s}")
                         case "TEXTSTRING":
                             value_str.append(f'\tTEXT\t"{parameter_value.value}"')
                         case "FESTWERTEBLOCK":
@@ -496,7 +498,7 @@ class DCMI:
                             for tmp_brkpt, tmp_value in zip(
                                 breakpoints_2.value, tmp_values
                             ):
-                                value_str.append(f"\tST/Y\t{str(tmp_brkpt)}")
+                                value_str.append(f"\tST/Y\t{tmp_brkpt!s}")
                                 value_str.extend(tmp_value)
                         case "STUETZSTELLENVERTEILUNG":
                             if parameter_name.endswith(
