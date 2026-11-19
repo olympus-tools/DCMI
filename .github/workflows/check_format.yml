@@ -10,7 +10,14 @@ on:
 
 jobs:
   check-format:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - python-version: '3.13.7'
+            os: ubuntu-24.04
+          - python-version: '3.14'
+            os: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -21,10 +28,11 @@ jobs:
 
       - name: Setup DCMI Environment
         uses: ./.github/workflow-actions/setup-dcmi
+        with:
+          python-version: '3.14'
 
       - name: Run ruff for format checking
-        run: |
-          make format-check
+        run: make format-check
 
       - name: Cleanup DCMI Environment
         uses: ./.github/workflow-actions/cleanup-dcmi

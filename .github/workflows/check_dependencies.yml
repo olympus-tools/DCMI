@@ -1,0 +1,51 @@
+name: Check Dependencies Pipeline
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  check-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup DCMI Environment
+        uses: ./.github/workflow-actions/setup-dcmi
+        with:
+          python-version: '3.14'
+          locked: 'true'
+
+      - name: Verify uv.lock is unchanged
+        shell: bash
+        run: |
+          if ! git diff --quiet -- uv.lock || test -n "$(git ls-files --others --exclude-standard -- uv.lock)"; then
+            echo "::error title=uv.lock check::uv sync changed uv.lock. Commit the updated lockfile."
+            git status --short -- uv.lock
+            git diff -- uv.lock
+            exit 1
+          fi
+
+      - name: Run dependency analysis and generate NOTICE
+        run: make thirdpartycheck
+
+      - name: Verify NOTICE is unchanged
+        shell: bash
+        run: |
+          if ! git diff --quiet -- NOTICE || test -n "$(git ls-files --others --exclude-standard -- NOTICE)"; then
+            echo "::error title=NOTICE check::make thirdpartycheck changed NOTICE. Commit the updated NOTICE."
+            git status --short -- NOTICE
+            git diff -- NOTICE
+            exit 1
+          fi
+
+      - name: Cleanup DCMI Environment
+        uses: ./.github/workflow-actions/cleanup-dcmi

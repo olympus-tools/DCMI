@@ -21,6 +21,8 @@ jobs:
 
       - name: Setup DCMI Environment
         uses: ./.github/workflow-actions/setup-dcmi
+        with:
+          python-version: '3.14'
 
       - name: Run coverage tests
         run: |

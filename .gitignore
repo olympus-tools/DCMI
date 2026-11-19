@@ -13,9 +13,9 @@ docs/_build/*
 **/__pycache__/*
 **/dcmi.egg-info/*
 **/DCMI.egg-info/*
+dcmi/core/version.py
 *.pyc
 *.pyo
-.python-version
 
 # coverage
 .coverage
