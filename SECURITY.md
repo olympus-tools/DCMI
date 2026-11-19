@@ -1,30 +1,24 @@
-# Security Policy
+# DCMI Security Policy
 
-## Reporting a Vulnerability
+## Reporting a vulnerability
 
-We take the security of TEMPLATE seriously. If you discover a vulnerability, we ask that you report it to us **responsibly and confidentially**. Please **do not** create a public GitHub issue for security-related matters.
+We take the security of DCMI seriously. If you discover a vulnerability,
+please report it responsibly and confidentially. Do not create a public GitHub
+issue for security-related matters.
 
-Instead, please send an email with the following information to TODO: **your-email@example.com**:
+Please use the private reporting channel configured for the repository and
+include:
 
-* **Description of the vulnerability:** Explain the nature of the security flaw and how it could potentially be exploited.
-* **Steps to reproduce:** Provide clear, step-by-step instructions to reproduce the issue. Include code examples, configurations, or screenshots that can help us understand and verify the problem.
-* **Affected versions:** Specify which version of TEMPLATE you found the vulnerability in.
+- A description of the vulnerability and its potential impact.
+- Steps to reproduce, including relevant files or commands.
+- Affected DCMI versions.
 
-We will review your report and keep you updated on our progress. Our goal is to address and fix the vulnerability as quickly as possible.
+## Supported versions
 
----
+We accept reports for the latest stable release and the latest development
+version. Reports for older versions may not be addressed.
 
-## Supported Versions
+## Reporting general bugs
 
-We accept vulnerability reports for the following versions of TEMPLATE:
-
-* **The latest stable release**
-* **The latest beta or development version** (if applicable)
-
-Reports for older, unsupported versions will not be addressed.
-
----
-
-## Reporting General Bugs
-
-For all other issues that are not security-related (e.g., crashes, unexpected behavior, or general errors), please open a new issue on GitHub with the `bug` label. You can use our [Bug Report Template](https://github.com/olympus-tools/TEMPLATE/issues/new?template=bug_report.md) to provide us with the necessary information.
+For non-security issues, open a GitHub issue with the `bugfix` label and use
+the [Bug Report Template](https://github.com/olympus-tools/DCMI/issues/new?template=bug_report.md).

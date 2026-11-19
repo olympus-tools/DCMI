@@ -6,4 +6,4 @@ runs:
     - name: Clean up
       shell: bash
       run: |
-        yes | make clean || true
+        make clean CLEAN_CONFIRM=true

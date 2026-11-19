@@ -1,21 +1,35 @@
 name: 'Setup DCMI Environment'
-description: 'Setup Python 3.13.7 and print system information'
+description: 'Set up a selected Python version and the DCMI uv environment'
+inputs:
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.14'
 runs:
   using: "composite"
   steps:
-    - name: Set up Python 3.13.7
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.13.7'
+        python-version: ${{ inputs.python-version }}
 
     - name: Print system information
       shell: bash
       run: |
-        echo "Running on Linux"
-        uname -a
-        python --version
+        echo "::group::System information"
+        echo "::notice title=Operating system::Linux."
+        echo "::notice title=Kernel::$(uname -a)."
+        echo "::notice title=Python::$(python --version 2>&1)."
+        echo "::endgroup::"
 
-    - name: Setup virtual environment
+    - name: Install uv
       shell: bash
       run: |
-        make setup-venv VENV_RELEASE=true VENV_RECREATE=true
+        pipx install uv==0.13.8
+
+    - name: Set up virtual environment
+      shell: bash
+      run: |
+        echo "::group::DCMI environment setup"
+        make setup-venv VENV_RECREATE=true
+        echo "::endgroup::"

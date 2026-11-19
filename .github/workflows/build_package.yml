@@ -1,0 +1,49 @@
+name: Build Package Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-package:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - python-version: '3.13.7'
+            os: ubuntu-24.04
+          - python-version: '3.14'
+            os: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup DCMI Environment
+        uses: ./.github/workflow-actions/setup-dcmi
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Build package
+        run: make build-package
+
+      - name: Install wheel and run smoke test
+        shell: bash
+        run: |
+          smoke_dir="$(mktemp -d)"
+          python -m venv "$smoke_dir/wheel"
+          "$smoke_dir/wheel/bin/python" -m pip install --quiet dist/*.whl
+          "$smoke_dir/wheel/bin/python" -c "import dcmi; import importlib.metadata; print(importlib.metadata.version('dcmi'))"
+          python -m venv "$smoke_dir/sdist"
+          "$smoke_dir/sdist/bin/python" -m pip install --quiet dist/*.tar.gz
+          "$smoke_dir/sdist/bin/python" -c "import dcmi; import importlib.metadata; print(importlib.metadata.version('dcmi'))"
+          rm -rf "$smoke_dir"
+
+      - name: Cleanup DCMI Environment
+        uses: ./.github/workflow-actions/cleanup-dcmi
